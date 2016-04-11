@@ -63,7 +63,7 @@ import org.junit.runner.RunWith;
     @OpenShiftResource("classpath:amq-test-imagestream.json")
 })
 @Replicas(2)
-public class AmqScaleTest extends AmqTestBase {
+public class AmqMultiReplicasPVTest extends AmqTestBase {
 
     private String openWireMessage = "Arquillian test - Persistent OpenWire";
 
@@ -85,6 +85,7 @@ public class AmqScaleTest extends AmqTestBase {
     @InSequence(2)
     public void testRestartAmq(@ArquillianResource OpenShiftHandle adapter) throws Exception {
         adapter.scaleDeployment("amq-test-amq", 1);
+        adapter.scaleDeployment("amq-test-amq", 2);
     }
 
     @Test
