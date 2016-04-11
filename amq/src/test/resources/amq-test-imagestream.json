@@ -2,7 +2,10 @@
   "kind": "ImageStream",
   "apiVersion": "v1",
   "metadata": {
-    "name": "jboss-amq-62"
+    "name": "jboss-amq-62",
+    "annotations": {
+      "openshift.io/image.insecureRepository": "true"
+    }
   },
   "spec": {
     "dockerImageRepository": "ce-os-registry.usersys.redhat.com:5000/alesj/amq62-openshift",
