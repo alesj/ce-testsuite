@@ -53,17 +53,19 @@ import org.junit.runner.RunWith;
  * @author Ricardo Martinelli
  */
 @RunWith(Arquillian.class)
-@Template(url = "https://raw.githubusercontent.com/jboss-openshift/application-templates/master/amq/amq62-persistent.json",
+@Template(url = "https://raw.githubusercontent.com/alesj/application-templates/amq1/amq/amq62-repl.json",
     parameters = {
         @TemplateParameter(name = "MQ_QUEUES", value = "QUEUES.FOO,QUEUES.BAR"),
         @TemplateParameter(name = "MQ_TOPICS", value = "topics.mqtt"),
         @TemplateParameter(name = "APPLICATION_NAME", value = "amq-test"),
         @TemplateParameter(name = "MQ_USERNAME", value = "${amq.username:amq-test}"),
         @TemplateParameter(name = "MQ_PASSWORD", value = "${amq.password:redhat}"),
+        @TemplateParameter(name = "IMAGE_STREAM_NAMESPACE", value = "${kubernetes.namespace}"),
         @TemplateParameter(name = "MQ_PROTOCOL", value = "openwire,amqp,mqtt,stomp")})
 @RoleBinding(roleRefName = "view", userName = "system:serviceaccount:${kubernetes.namespace}:default")
 @OpenShiftResources({
-    @OpenShiftResource("classpath:testrunner-claim.json") // Because SSL tests requires testrunner pod to be persistent it is required for all tests to create the pvc even if not used
+    @OpenShiftResource("classpath:testrunner-claim.json"), // Because SSL tests requires testrunner pod to be persistent it is required for all tests to create the pvc even if not used
+    @OpenShiftResource("classpath:amq-test-imagestream.json")
 })
 public class AmqPersistentTest extends AmqTestBase {
 
