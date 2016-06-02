@@ -23,6 +23,24 @@
 
 package org.jboss.test.arquillian.ce.decisionserver;
 
+import java.io.StringReader;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Properties;
+import java.util.Set;
+import java.util.logging.Logger;
+
+import javax.jms.ConnectionFactory;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.Unmarshaller;
+
 import io.fabric8.utils.Base64Encoder;
 import org.jboss.arquillian.ce.api.ConfigurationHandle;
 import org.jboss.arquillian.ce.httpclient.HttpClient;
@@ -55,17 +73,8 @@ import org.kie.server.client.KieServicesFactory;
 import org.kie.server.client.RuleServicesClient;
 import org.openshift.quickstarts.decisionserver.hellorules.Greeting;
 import org.openshift.quickstarts.decisionserver.hellorules.Person;
-
-import javax.jms.ConnectionFactory;
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.Unmarshaller;
-import java.io.StringReader;
-import java.net.URL;
-import java.util.*;
-import java.util.logging.Logger;
+import org.openshift.quickstarts.decisionserver.hellorules.Props;
+import org.openshift.quickstarts.decisionserver.hellorules.PropsName;
 
 
 /**
@@ -164,6 +173,8 @@ public abstract class DecisionServerTestBase {
         Set<Class<?>> classes = new HashSet<>();
         classes.add(Person.class);
         classes.add(Greeting.class);
+        classes.add(Props.class);
+        classes.add(PropsName.class);
         return classes;
     }
 
