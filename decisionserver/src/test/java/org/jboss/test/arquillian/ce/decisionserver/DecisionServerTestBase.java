@@ -70,7 +70,6 @@ import org.kie.server.api.model.ServiceResponse;
 import org.kie.server.client.KieServicesClient;
 import org.kie.server.client.KieServicesConfiguration;
 import org.kie.server.client.KieServicesFactory;
-import org.kie.server.client.RuleServicesClient;
 import org.openshift.quickstarts.decisionserver.hellorules.Greeting;
 import org.openshift.quickstarts.decisionserver.hellorules.Person;
 import org.openshift.quickstarts.decisionserver.hellorules.Props;
@@ -159,11 +158,30 @@ public abstract class DecisionServerTestBase {
         return KieServicesFactory.newKieServicesClient(config);
     }
 
-    /*
-    * Return the RuleServicesClient
-    */
-    public RuleServicesClient getRuleServicesClient(KieServicesClient client) {
-        return client.getServicesClient(RuleServicesClient.class);
+    protected ServiceResponse<String> executeCommands(KieServicesClient client, String id, BatchExecutionCommand command) {
+        // return client.getServicesClient(RuleServicesClient.class).executeCommands(id, command);
+        String payload = null; // command --> payload ?? TODO
+        return client.executeCommands(id, payload);
+    }
+
+    protected static Marshaller getMarshaller(Set<Class<?>> classes, MarshallingFormat format, ClassLoader classLoader) {
+        // return MarshallerFactory.getMarshaller(classes, format, classLoader);
+        return MarshallerFactory.getMarshaller(format, classLoader); // Is this OK? w/o classes
+    }
+
+    protected void assertCapabilities(KieServerInfo serverInfo) {
+        // Where the result will be stored
+        String serverCapabilitiesResult = "";
+
+        // Reading Server capabilities
+        //TODO -- missing getCapabilities() method
+//        for (String capability : serverInfo.getCapabilities()) {
+//            serverCapabilitiesResult += capability;
+//        }
+
+        // Sometimes the getCapabilities returns "KieServer BRM" and another time "BRM KieServer"
+        // We have to make sure the result will be the same always
+        Assert.assertTrue(serverCapabilitiesResult.equals("KieServerBRM") || serverCapabilitiesResult.equals("BRMKieServer"));
     }
 
     /*
@@ -203,21 +221,9 @@ public abstract class DecisionServerTestBase {
         // for untrusted connections
         prepareClientInvocation();
 
-        // Where the result will be stored
-        String serverCapabilitiesResult = "";
-
         // Getting the KieServiceClient
         KieServicesClient kieServicesClient = getKieRestServiceClient(url);
-        KieServerInfo serverInfo = kieServicesClient.getServerInfo().getResult();
-
-        // Reading Server capabilities
-        for (String capability : serverInfo.getCapabilities()) {
-            serverCapabilitiesResult += capability;
-        }
-
-        // Sometimes the getCapabilities returns "KieServer BRM" and another time "BRM KieServer"
-        // We have to make sure the result will be the same always
-        Assert.assertTrue(serverCapabilitiesResult.equals("KieServerBRM") || serverCapabilitiesResult.equals("BRMKieServer"));
+        assertCapabilities(kieServicesClient.getServerInfo().getResult());
     }
 
     /*
@@ -257,9 +263,9 @@ public abstract class DecisionServerTestBase {
 
         KieServicesClient client = getKieRestServiceClient(getRouteURL());
 
-        ServiceResponse<String> response = getRuleServicesClient(client).executeCommands("HelloRulesContainer", batchCommand());
+        ServiceResponse<String> response = executeCommands(client, "HelloRulesContainer", batchCommand());
 
-        Marshaller marshaller = MarshallerFactory.getMarshaller(getClasses(), MarshallingFormat.XSTREAM, Person.class.getClassLoader());
+        Marshaller marshaller = getMarshaller(getClasses(), MarshallingFormat.XSTREAM, Person.class.getClassLoader());
         ExecutionResults results = marshaller.unmarshall(response.getResult(), ExecutionResults.class);
 
         // results cannot be null
@@ -285,8 +291,8 @@ public abstract class DecisionServerTestBase {
 
         KieServicesClient client = getKieJmsServiceClient();
 
-        ServiceResponse<String> response = getRuleServicesClient(client).executeCommands("HelloRulesContainer", batchCommand());
-        Marshaller marshaller = MarshallerFactory.getMarshaller(getClasses(), MarshallingFormat.XSTREAM, Person.class.getClassLoader());
+        ServiceResponse<String> response = executeCommands(client, "HelloRulesContainer", batchCommand());
+        Marshaller marshaller = getMarshaller(getClasses(), MarshallingFormat.XSTREAM, Person.class.getClassLoader());
         ExecutionResults results = marshaller.unmarshall(response.getResult(), ExecutionResults.class);
 
         // results cannot be null
@@ -309,21 +315,12 @@ public abstract class DecisionServerTestBase {
     public void checkDecisionServerCapabilitiesAMQ() throws NamingException {
         log.info("Running test checkDecisionServerCapabilitiesAMQ");
         log.info("Trying to connect to AMQ HOST: " + AMQ_HOST);
-        // Where the result will be stored
-        String serverCapabilitiesResult = "";
 
         // Getting the KieServiceClient JMS
         KieServicesClient kieServicesClient = getKieJmsServiceClient();
         KieServerInfo serverInfo = kieServicesClient.getServerInfo().getResult();
 
-        // Reading Server capabilities
-        for (String capability : serverInfo.getCapabilities()) {
-            serverCapabilitiesResult += (capability);
-        }
-
-        // Sometimes the getCapabilities returns "KieServer BRM" and another time "BRM KieServer"
-        // We have to make sure the result will be the same always
-        Assert.assertTrue(serverCapabilitiesResult.equals("KieServerBRM") || serverCapabilitiesResult.equals("BRMKieServer"));
+        assertCapabilities(serverInfo);
     }
 
     /*
@@ -384,9 +381,9 @@ public abstract class DecisionServerTestBase {
         prepareClientInvocation();
         KieServicesClient client = getKieRestServiceClient(getRouteURL());
 
-        ServiceResponse<String> response = getRuleServicesClient(client).executeCommands("AnotherContainer", batchCommand());
+        ServiceResponse<String> response = executeCommands(client, "AnotherContainer", batchCommand());
 
-        Marshaller marshaller = MarshallerFactory.getMarshaller(getClasses(), MarshallingFormat.XSTREAM, Person.class.getClassLoader());
+        Marshaller marshaller = getMarshaller(getClasses(), MarshallingFormat.XSTREAM, Person.class.getClassLoader());
         ExecutionResults results = marshaller.unmarshall(response.getResult(), ExecutionResults.class);
 
         // results cannot be null
@@ -432,8 +429,8 @@ public abstract class DecisionServerTestBase {
 
         KieServicesClient client = getKieJmsServiceClient();
 
-        ServiceResponse<String> response = getRuleServicesClient(client).executeCommands("AnotherContainer", batchCommand());
-        Marshaller marshaller = MarshallerFactory.getMarshaller(getClasses(), MarshallingFormat.XSTREAM, Person.class.getClassLoader());
+        ServiceResponse<String> response = executeCommands(client, "AnotherContainer", batchCommand());
+        Marshaller marshaller = getMarshaller(getClasses(), MarshallingFormat.XSTREAM, Person.class.getClassLoader());
         ExecutionResults results = marshaller.unmarshall(response.getResult(), ExecutionResults.class);
 
         // results cannot be null
@@ -537,13 +534,7 @@ public abstract class DecisionServerTestBase {
         ServiceResponse serviceResponse = (ServiceResponse) unmarshaller.unmarshal(new StringReader(output));
         KieServerInfo serverInfo = (KieServerInfo) serviceResponse.getResult();
 
-        // Reading Server capabilities
-        String serverCapabilitiesResult = "";
-        for (String capability : serverInfo.getCapabilities()) {
-            serverCapabilitiesResult += (capability);
-        }
-
-        Assert.assertTrue(serverCapabilitiesResult.equals("KieServerBRM") || serverCapabilitiesResult.equals("BRMKieServer"));
+        assertCapabilities(serverInfo);
     }
 
     /*
@@ -607,7 +598,7 @@ public abstract class DecisionServerTestBase {
         // retrieving output response
         String output = response.getResponseBodyAsString();
 
-        Marshaller marshaller = MarshallerFactory.getMarshaller(getClasses(), MarshallingFormat.XSTREAM, Person.class.getClassLoader());
+        Marshaller marshaller = getMarshaller(getClasses(), MarshallingFormat.XSTREAM, Person.class.getClassLoader());
         ServiceResponse serviceResponse = marshaller.unmarshall(output, ServiceResponse.class);
 
         ExecutionResults execResults = marshaller.unmarshall(String.valueOf(serviceResponse.getResult()), ExecutionResults.class);
@@ -639,7 +630,7 @@ public abstract class DecisionServerTestBase {
         // retrieving output response
         String output = response.getResponseBodyAsString();
 
-        Marshaller marshaller = MarshallerFactory.getMarshaller(getClasses(), MarshallingFormat.XSTREAM, Person.class.getClassLoader());
+        Marshaller marshaller = getMarshaller(getClasses(), MarshallingFormat.XSTREAM, Person.class.getClassLoader());
         ServiceResponse serviceResponse = marshaller.unmarshall(output, ServiceResponse.class);
 
         ExecutionResults execResults = marshaller.unmarshall(String.valueOf(serviceResponse.getResult()), ExecutionResults.class);

@@ -80,13 +80,20 @@
 
         <!-- KIE -->
 
+        <!-- NOTE: org.kie VS org.kie.server AS groupId -->
+
         <dependency>
-            <groupId>org.kie.server</groupId>
+            <groupId>org.kie</groupId>
+            <artifactId>kie-api</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.kie</groupId>
             <artifactId>kie-server-api</artifactId>
         </dependency>
 
         <dependency>
-            <groupId>org.kie.server</groupId>
+            <groupId>org.kie</groupId>
             <artifactId>kie-server-client</artifactId>
         </dependency>
 

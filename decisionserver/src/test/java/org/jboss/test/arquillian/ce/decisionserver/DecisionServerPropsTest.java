@@ -43,7 +43,6 @@ import org.kie.api.runtime.rule.QueryResults;
 import org.kie.api.runtime.rule.QueryResultsRow;
 import org.kie.internal.command.CommandFactory;
 import org.kie.server.api.marshalling.Marshaller;
-import org.kie.server.api.marshalling.MarshallerFactory;
 import org.kie.server.api.marshalling.MarshallingFormat;
 import org.kie.server.api.model.ServiceResponse;
 import org.kie.server.client.KieServicesClient;
@@ -97,9 +96,9 @@ public class DecisionServerPropsTest extends DecisionServerTestBase {
 
         KieServicesClient client = getKieRestServiceClient(getRouteURL());
 
-        ServiceResponse<String> response = getRuleServicesClient(client).executeCommands("HelloRulesContainer", batchCommand());
+        ServiceResponse<String> response = executeCommands(client, "HelloRulesContainer", batchCommand());
 
-        Marshaller marshaller = MarshallerFactory.getMarshaller(getClasses(), MarshallingFormat.XSTREAM, Props.class.getClassLoader());
+        Marshaller marshaller = getMarshaller(getClasses(), MarshallingFormat.XSTREAM, Props.class.getClassLoader());
         ExecutionResults results = marshaller.unmarshall(response.getResult(), ExecutionResults.class);
 
         // results cannot be null
