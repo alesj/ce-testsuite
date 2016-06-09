@@ -84,7 +84,7 @@ public class DecisionServerPropsTest extends DecisionServerTestBase {
         List<Command<?>> commands = new ArrayList<>();
         commands.add((Command<?>) CommandFactory.newInsert(new PropsName("some.properties")));
         commands.add((Command<?>) CommandFactory.newFireAllRules());
-        commands.add((Command<?>) CommandFactory.newQuery("propz", "get props"));
+        commands.add((Command<?>) CommandFactory.newQuery("propz", "get properties"));
         return CommandFactory.newBatchExecution(commands, "HelloRulesSession");
     }
 
@@ -97,6 +97,7 @@ public class DecisionServerPropsTest extends DecisionServerTestBase {
         KieServicesClient client = getKieRestServiceClient(getRouteURL());
 
         ServiceResponse<String> response = executeCommands(client, "HelloRulesContainer", batchCommand());
+        Assert.assertNotNull("Null response", response);
 
         Marshaller marshaller = getMarshaller(getClasses(), MarshallingFormat.XSTREAM, Props.class.getClassLoader());
         ExecutionResults results = marshaller.unmarshall(response.getResult(), ExecutionResults.class);

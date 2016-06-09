@@ -70,6 +70,7 @@ import org.kie.server.api.model.ServiceResponse;
 import org.kie.server.client.KieServicesClient;
 import org.kie.server.client.KieServicesConfiguration;
 import org.kie.server.client.KieServicesFactory;
+import org.kie.server.client.RuleServicesClient;
 import org.openshift.quickstarts.decisionserver.hellorules.Greeting;
 import org.openshift.quickstarts.decisionserver.hellorules.Person;
 import org.openshift.quickstarts.decisionserver.hellorules.Props;
@@ -159,14 +160,11 @@ public abstract class DecisionServerTestBase {
     }
 
     protected ServiceResponse<String> executeCommands(KieServicesClient client, String id, BatchExecutionCommand command) {
-        // return client.getServicesClient(RuleServicesClient.class).executeCommands(id, command);
-        String payload = null; // command --> payload ?? TODO
-        return client.executeCommands(id, payload);
+        return client.getServicesClient(RuleServicesClient.class).executeCommands(id, command);
     }
 
     protected static Marshaller getMarshaller(Set<Class<?>> classes, MarshallingFormat format, ClassLoader classLoader) {
-        // return MarshallerFactory.getMarshaller(classes, format, classLoader);
-        return MarshallerFactory.getMarshaller(format, classLoader); // Is this OK? w/o classes
+        return MarshallerFactory.getMarshaller(classes, format, classLoader);
     }
 
     protected void assertCapabilities(KieServerInfo serverInfo) {
@@ -174,10 +172,9 @@ public abstract class DecisionServerTestBase {
         String serverCapabilitiesResult = "";
 
         // Reading Server capabilities
-        //TODO -- missing getCapabilities() method
-//        for (String capability : serverInfo.getCapabilities()) {
-//            serverCapabilitiesResult += capability;
-//        }
+        for (String capability : serverInfo.getCapabilities()) {
+            serverCapabilitiesResult += capability;
+        }
 
         // Sometimes the getCapabilities returns "KieServer BRM" and another time "BRM KieServer"
         // We have to make sure the result will be the same always

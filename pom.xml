@@ -40,7 +40,7 @@
 		<version.syslog4j>0.9.30</version.syslog4j>
 		<!-- Decision server -->
 		<version.jboss.bom.brms>6.2.0.GA-redhat-1</version.jboss.bom.brms>
-		<version.org.kie>6.2.0.Final-redhat-14</version.org.kie>
+		<version.org.kie>6.3.0.Final-redhat-7</version.org.kie>
 		<version.activemq>5.8.0.redhat-60083</version.activemq>
 		<!-- AMQ -->
 		<version.jms>1.1</version.jms>
