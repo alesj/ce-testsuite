@@ -39,7 +39,6 @@
 		<version.httpclient>4.3.6.redhat-1</version.httpclient>
 		<version.syslog4j>0.9.30</version.syslog4j>
 		<!-- Decision server -->
-		<version.jboss.bom.brms>6.2.0.GA-redhat-1</version.jboss.bom.brms>
 		<version.org.kie>6.3.0.Final-redhat-7</version.org.kie>
 		<version.activemq>5.8.0.redhat-60083</version.activemq>
 		<!-- AMQ -->
@@ -327,14 +326,6 @@
 			</dependency>
 
 			<!-- Decision server -->
-
-			<dependency>
-				<groupId>org.jboss.bom.brms</groupId>
-				<artifactId>jboss-brms-bpmsuite-bom</artifactId>
-				<version>${version.jboss.bom.brms}</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
 
 			<dependency>
 				<groupId>org.kie</groupId>
