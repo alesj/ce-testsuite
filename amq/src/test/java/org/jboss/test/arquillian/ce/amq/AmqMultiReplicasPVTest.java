@@ -58,7 +58,7 @@ import org.junit.runner.RunWith;
         @TemplateParameter(name = "MQ_PASSWORD", value = "${amq.password:redhat}"),
         @TemplateParameter(name = "MQ_PROTOCOL", value = "openwire,amqp,mqtt,stomp"),
         @TemplateParameter(name = "IMAGE_STREAM_NAMESPACE", value = "${kubernetes.namespace}")}) // remove when amq-internal-is is removed
-@RoleBinding(roleRefName = "view", userName = "system:serviceaccount:${kubernetes.namespace}:default")
+@RoleBinding(roleRefName = "edit", userName = "system:serviceaccount:${kubernetes.namespace}:default")
 @OpenShiftResources({
     @OpenShiftResource("classpath:testrunner-secret.json"),
     @OpenShiftResource("classpath:amq-internal-imagestream.json") // custom dev imagestream; remove when multi repl image is in prod
