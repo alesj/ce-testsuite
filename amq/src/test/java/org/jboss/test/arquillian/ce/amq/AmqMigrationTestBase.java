@@ -84,7 +84,7 @@ public class AmqMigrationTestBase extends AmqTestBase {
     }
 
     protected static int waitForDrain(OpenShiftHandle adapter, int p, boolean checkIfReady, String... parts) throws Exception {
-        int repeat = 20;
+        int repeat = 50;
         while (repeat > 0) {
             String drainLog = null;
             if (checkIfReady) {

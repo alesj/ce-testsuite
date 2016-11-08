@@ -62,7 +62,8 @@ import org.junit.runner.RunWith;
     @OpenShiftResource("classpath:amq-internal-imagestream.json") // custom dev imagestream; remove when multi repl image is in prod
 })
 @Replicas(1)
-public class AmqRollingUpgradeTest extends AmqMigrationTestBase {
+public class AmqRollingUpdateTest extends AmqMigrationTestBase {
+    private static final int MSGS = 10;
     private static final int N = 5;
 
     @Deployment
@@ -80,19 +81,21 @@ public class AmqRollingUpgradeTest extends AmqMigrationTestBase {
     @Test
     @InSequence(2)
     public void testSendMsgs() throws Exception {
-        sendNMessages(1, 11); // 10 msgs
+        for (int i = 1; i <= MSGS; i++) {
+            sendNMessages(i, i + 1); // 10 msgs
+        }
     }
 
     @Test
     @RunAsClient
     @InSequence(3)
     public void testRollingUpdate(@ArquillianResource OpenShiftHandle adapter) throws Exception {
-        adapter.rollingUpgrade("amq-test-amq", true);
+        adapter.triggerDeploymentConfigUpdate("amq-test-amq", true);
     }
 
     @Test
     @InSequence(4)
     public void testConsumeMsgs() throws Exception {
-        consumeMsgs(10);
+        consumeMsgs(MSGS);
     }
 }

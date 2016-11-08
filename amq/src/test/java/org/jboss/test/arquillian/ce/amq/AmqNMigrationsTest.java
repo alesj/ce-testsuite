@@ -72,6 +72,7 @@ public class AmqNMigrationsTest extends AmqMigrationTestBase {
 
     private static final Logger log = Logger.getLogger(AmqNMigrationsTest.class.getName());
 
+    private static final int MSGS = 10;
     private static final int REPLICAS = 5;
     private static final String QUEUE_OBJECT_NAME = "org.apache.activemq:brokerName=%s,destinationName=QUEUES.FOO,destinationType=Queue,type=Broker";
 
@@ -90,14 +91,16 @@ public class AmqNMigrationsTest extends AmqMigrationTestBase {
     @Test
     @InSequence(2)
     public void testSendMsgs() throws Exception {
-        sendNMessages(1, 11); // 10 msgs
+        for (int i = 1; i <= MSGS; i++) {
+            sendNMessages(i, i + 1); // 10 msgs
+        }
     }
 
     @Test
     @RunAsClient
     @InSequence(3)
     public void testMigrate(@ArquillianResource OpenShiftHandle adapter) throws Exception {
-        final int N = 10;
+        final int N = 5;
 
         for (int i = 0; i < N; i++) {
             List<String> pods = new ArrayList<>(adapter.getReadyPods("amq-test-amq"));
@@ -114,14 +117,15 @@ public class AmqNMigrationsTest extends AmqMigrationTestBase {
 
             log.info(String.format("Deleting pod: %s", pods.get(pi)));
             adapter.deletePod(pods.get(pi), -1);
+
+            adapter.waitForReadyPods("amq-test-amq", REPLICAS);
         }
 
-        adapter.waitForReadyPods("amq-test-amq", REPLICAS);
     }
 
     @Test
     @InSequence(4)
     public void testConsumeMsgs() throws Exception {
-        consumeMsgs(10);
+        consumeMsgs(MSGS);
     }
 }
